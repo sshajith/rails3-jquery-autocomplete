@@ -1,3 +1,7 @@
+Now you can search multiple columns through this fork.
+
+autocomplete :brand, :name, :columns_names=>[:name, :category]
+
 # rails3-jquery-autocomplete
 
 [![Build Status](https://secure.travis-ci.org/crowdint/rails3-jquery-autocomplete.png)](http://travis-ci.org/crowdint/rails3-jquery-autocomplete)
