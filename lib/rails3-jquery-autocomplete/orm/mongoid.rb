@@ -1,7 +1,7 @@
 module Rails3JQueryAutocomplete
   module Orm
     module Mongoid
-      def get_autocomplete_order(method, options, model=nil)
+       def get_autocomplete_order(methods, options, model=nil)
         order = options[:order]
         if order
           order.split(',').collect do |fields|
@@ -9,8 +9,18 @@ module Rails3JQueryAutocomplete
             [sfields[0].downcase.to_sym, sfields[1].downcase.to_sym]
           end
         else
-          [[method.to_sym, :asc]]
+
+          [  order_by_method(methods)  ]
+
         end
+      end
+
+      def order_by_method(methods)
+        order = []
+        methods.each do |method|
+        order << [method.to_sym, :asc]
+        end
+        return order
       end
 
       def get_autocomplete_items(parameters)
