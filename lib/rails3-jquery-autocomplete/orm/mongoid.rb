@@ -14,20 +14,37 @@ module Rails3JQueryAutocomplete
       end
 
       def get_autocomplete_items(parameters)
-        model          = parameters[:model]
-        method         = parameters[:method]
-        options        = parameters[:options]
+        model   = parameters[:model]
+        term    = parameters[:term]
+        methods  = parameters[:methods]
+        options = parameters[:options]
         is_full_search = options[:full]
-        term           = parameters[:term]
-        limit          = get_autocomplete_limit(options)
-        order          = get_autocomplete_order(method, options)
+        scopes  = Array(options[:scopes])
+        limit   = get_autocomplete_limit(options)
+        order   = get_autocomplete_order(methods, options, model)
+        items = model.scoped
+
+        scopes.each { |scope| items = items.send(scope) } unless scopes.empty?
 
         if is_full_search
           search = '.*' + term + '.*'
         else
           search = '^' + term
         end
-        items  = model.where(method.to_sym => /#{search}/i).limit(limit).order_by(order)
+
+        items_scoped = []
+        scoped_criteria = []
+        methods.each do | method |
+        scoped_criteria <<  model.where(method.to_sym => /#{search}/i).limit(limit).order_by(order)
+        end
+
+        scoped_criteria.each do | criteria |
+          criteria.each do |item|
+            items_scoped << item
+          end
+        end
+
+        return items_scoped
       end
     end
   end
